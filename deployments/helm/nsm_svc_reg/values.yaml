@@ -3,9 +3,9 @@
 # Declare variables to be passed into your templates.
 
 registry: docker.io
-org: tiswanso
+org: johnajoyce
 tag: latest
-pullPolicy: IfNotPresent
+pullPolicy: Always
 
 # Indicate the secret created with the service registry cluster's kubeconfig
 svcRegKubeConfigSecret: svcregkubeconfig

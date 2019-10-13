@@ -13,7 +13,7 @@ DOCKER_BUILD_TOP:=${OUT_LINUX}/docker_build
 .PHONY: build-nsm-svc-reg
 build-nsm-svc-reg: 
 	mkdir -p ${GOPATH}/bin/linux_amd64/nsm-istio
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -ldflags '-extldflags "-static"' -o ${GOPATH}/bin/linux_amd64/nsm-istio ./nsm_svc_reg/...
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build -ldflags '-extldflags "-static"' -o ${GOPATH}/bin/linux_amd64/nsm-istio/nsm_svc_reg ./nsm_svc_reg/cmd/nsm_svc_reg/...
 
 .PHONY: docker-nsm-svc-reg
 docker-nsm-svc-reg: build-nsm-svc-reg

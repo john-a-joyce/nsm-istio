@@ -222,7 +222,7 @@ func (c *Controller) getPodEndpoint(pod *corev1.Pod) string {
 	cmd := "ip -o addr list"
 	output, err:= util.ShellSilent("kubectl exec %s --kubeconfig=%s -- %s | grep %s", podHandle, c.kubeconfig, cmd, ifName)
 	if err != nil{
-		for i := 1;  i<=20; i++ {
+		for i := 1;  i<=100; i++ {
 			time.Sleep(30)
 			output, err = util.ShellSilent("kubectl exec %s --kubeconfig=%s -- %s | grep %s", podHandle, c.kubeconfig, cmd, ifName)
 		}
@@ -274,7 +274,7 @@ func (c *Controller) createSVC(svcName string, portNumber int32) error {
 			Ports: []corev1.ServicePort{
 				{
 					Port:     portNumber,
-					Name:     svcName,
+					Name:     "http-" + svcName,
 					//Protocol: corev1.ProtocolTCP,
 				},
 			},
@@ -309,6 +309,8 @@ func (c *Controller) createEP(svcName string, portNumber int32, endPoint string)
 		testEP.Subsets[0].Addresses = append(testEP.Subsets[0].Addresses, corev1.EndpointAddress{
 			IP: endPoint,
 		})
+	        //subset := make([]corev1.EndpointSubset,0)
+		//testEP.Subsets = append(subset, corev1.EndpointAddress{ IP: endPoint, })
 		testEP, err = c.remoteKubeClientset.CoreV1().Endpoints(namespace).Update(testEP)
 		if err != nil {
 			log.Infof("Couldn't add address = %s to endpoint", testEP, endPoint)
@@ -328,7 +330,9 @@ func (c *Controller) createEP(svcName string, portNumber int32, endPoint string)
 	eas := make([]corev1.EndpointAddress, 0)
 	eas = append(eas, corev1.EndpointAddress{IP: endPoint})
 	eps := make([]corev1.EndpointPort,0)
-	eps = append(eps, corev1.EndpointPort{Name: svcName, Port: portNumber})
+	//eps = append(eps, corev1.EndpointPort{Name: svcName, Port: portNumber})
+        eps = append(eps, corev1.EndpointPort{Name: "http-" + svcName, Port: portNumber})
+
 
 	endpoint := &corev1.Endpoints{
 		ObjectMeta: meta_v1.ObjectMeta{

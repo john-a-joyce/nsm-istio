@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         run: nsm-svc-reg
+      annotations:
+        sidecar.istio.io/inject: "false"
     spec:
       containers:
         - name: nsm-svc-reg

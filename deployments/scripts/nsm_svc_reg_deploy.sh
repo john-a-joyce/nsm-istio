@@ -61,13 +61,13 @@ if [[ -z ${SVCREGKUBECONFIG} || -z ${REMOTEKUBECONFIG} ]]; then
 fi
 
 if [[ "${DELETE}" == "true" ]]; then
-    helm template ${HELMDIR}/nsm_svc_reg ${NAMESPACE:+--set watchNamespace=$NAMESPACE} | kubectl delete -f -
-    kubectl delete secret svcregkubeconfig
-    kubectl delete secret watchkubeconfig
+    helm template ${HELMDIR}/nsm_svc_reg ${NAMESPACE:+--set watchNamespace=$NAMESPACE} | kubectl delete ${KUBECONFIG:+--kubeconfig $KUBECONFIG} -f -
+    kubectl delete secret svcregkubeconfig ${KUBECONFIG:+--kubeconfig $KUBECONFIG}
+    kubectl delete secret watchkubeconfig ${KUBECONFIG:+--kubeconfig $KUBECONFIG}
     exit 0
 fi
 
-kubectl create secret generic svcregkubeconfig --from-file=kubeconfig=${SVCREGKUBECONFIG}
-kubectl create secret generic watchkubeconfig --from-file=kubeconfig=${REMOTEKUBECONFIG}
+kubectl create secret generic svcregkubeconfig --from-file=kubeconfig=${SVCREGKUBECONFIG} ${KUBECONFIG:+--kubeconfig $KUBECONFIG}
+kubectl create secret generic watchkubeconfig --from-file=kubeconfig=${REMOTEKUBECONFIG} ${KUBECONFIG:+--kubeconfig $KUBECONFIG}
 
-helm template ${HELMDIR}/nsm_svc_reg ${NAMESPACE:+--set watchNamespace=$NAMESPACE} | kubectl apply -f -
+helm template ${HELMDIR}/nsm_svc_reg ${NAMESPACE:+--set watchNamespace=$NAMESPACE} | kubectl apply  ${KUBECONFIG:+--kubeconfig $KUBECONFIG} -f -
